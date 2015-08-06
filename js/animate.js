@@ -1,4 +1,10 @@
 $(document).ready(function() {
+  var intervals = {};
+
+  function every(milliseconds, fn) {
+    setInterval(fn, milliseconds);
+  }
+
   $('[data-sprite]').each(function(i, el) {
     el = $(el);
     var img = new Image();
@@ -13,7 +19,7 @@ $(document).ready(function() {
       'width': img.width / parseInt(el.data('frames')),
       'background': "url('" + img.src + "')",
     });
-    setInterval(function() { forwardAnimation(el) }, 1000 / parseInt(el.data('fps')));
+    every(1000 / parseInt(el.data('fps')), function() { forwardAnimation(el) });
     el.trigger('load');
   }
 
@@ -22,9 +28,10 @@ $(document).ready(function() {
     el.css('background-position', '' + (1 - el.data('frame')) * el.width() + 'px 0');
   }
 
-  $('[data-scroll-pps]').each(function(i, el) {
+  $('[data-pan]').each(function(i, el) {
     el = $(el);
-    setInterval(function() { forwardScroll(el) }, 1000 / parseInt(el.data('scroll-pps')));
+    var pps = parseInt(el.data('fps')) * parseInt(el.data('speed'));
+    every(1000 / pps, function() { forwardScroll(el) });
   });
 
   function forwardScroll(el) {
